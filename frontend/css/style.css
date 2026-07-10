@@ -1,0 +1,215 @@
+/* ===== GLOBAL ===== */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+    color: black;
+}
+
+body{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: linear-gradient(-45deg, #FFF7C5, #F4AE52, #9e7743, #855f2e);
+    background-size: 400% 400%;
+    animation: gradientBG 10s ease infinite;
+    overflow:hidden;
+}
+
+/* animated background */
+@keyframes gradientBG{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+.logo{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+}
+/* floating circles */
+body::before,
+body::after{
+    content:"";
+    position:absolute;
+    width:250px;
+    height:250px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.08);
+    animation: float 8s ease-in-out infinite;
+}
+
+body::before{
+    top:10%;
+    left:10%;
+}
+
+body::after{
+    bottom:10%;
+    right:10%;
+    animation-delay:2s;
+}
+
+@keyframes float{
+    0%{transform:translateY(0);}
+    50%{transform:translateY(-30px);}
+    100%{transform:translateY(0);}
+}
+
+/* container */
+.container{
+    width:100%;
+    max-width:420px;
+    z-index:2;
+}
+
+/* glass card */
+.card{
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(15px);
+    border:1px solid rgba(255,255,255,0.2);
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 20px 40px rgba(0,0,0,0.2);
+    animation: popIn 0.8s ease;
+    text-align:center;
+}
+
+@keyframes popIn{
+    from{
+        transform:scale(0.8);
+        opacity:0;
+    }
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+.card h2{
+    color:rgb(17, 15, 15);
+    margin-bottom:20px;
+    letter-spacing:1px;
+}
+
+/* inputs */
+input{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    border:none;
+    border-radius:10px;
+    outline:none;
+    transition:0.3s;
+}
+
+input:focus{
+    transform:scale(1.03);
+    box-shadow:0 0 15px rgba(255,255,255,0.4);
+}
+
+/* buttons */
+button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:10px;
+    font-weight:bold;
+    cursor:pointer;
+    color:white;
+    background:linear-gradient(135deg,#4F252E,#a5485c);
+    transition:0.3s;
+    position:relative;
+    overflow:hidden;
+}
+
+button:hover{
+    transform:translateY(-3px);
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+/* shine effect */
+button::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:100%;
+    height:100%;
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,0.4),transparent);
+    transition:0.5s;
+}
+
+button:hover::after{
+    left:100%;
+}
+
+#message{
+    color:white;
+    margin-top:10px;
+    font-weight:bold;
+}
+/* ===== MOBILE RESPONSIVE LOGIN ===== */
+
+@media (max-width: 768px){
+
+    body{
+        padding:15px;
+    }
+
+    /* make card fit mobile */
+    .card{
+        width:100%;
+        max-width:100%;
+        padding:25px;
+        border-radius:18px;
+    }
+
+    /* heading size */
+    .card h2{
+        font-size:20px;
+    }
+
+    /* inputs touch friendly */
+    input{
+        font-size:14px;
+        padding:11px;
+    }
+
+    /* buttons better tap size */
+    button{
+        font-size:15px;
+        padding:12px;
+    }
+
+    /* reduce floating circles size (performance) */
+    body::before,
+    body::after{
+        width:180px;
+        height:180px;
+        opacity:0.06;
+    }
+}
+
+/* ===== SMALL MOBILE (VERY SMALL PHONES) ===== */
+@media (max-width: 480px){
+
+    .card{
+        padding:20px;
+    }
+
+    .card h2{
+        font-size:18px;
+    }
+
+    input{
+        font-size:13px;
+    }
+
+    button{
+        font-size:14px;
+    }
+}
