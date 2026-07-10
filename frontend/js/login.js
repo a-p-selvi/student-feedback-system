@@ -14,7 +14,7 @@ sendOtpBtn.addEventListener("click", async () => {
 
         console.log("Sending Email:", email);
 
-        const response = await fetch("http://localhost:3000/api/auth/send-otp", {
+        const response = await fetch("/api/auth/send-otp", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -51,7 +51,7 @@ verifyOtpBtn.addEventListener("click", async () => {
 
     try {
 
-        const response = await fetch("http://localhost:3000/api/auth/verify-otp", {
+        const response = await fetch("/api/auth/verify-otp", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -64,7 +64,7 @@ verifyOtpBtn.addEventListener("click", async () => {
         if (data.success) {
 
             alert("✅ OTP Verified Successfully");
-            window.location.href = "dashboard.html";
+            window.location.href = "/dashboard.html";
 
         } else {
 
