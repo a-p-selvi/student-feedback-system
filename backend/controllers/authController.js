@@ -1,5 +1,6 @@
 const nodemailer = require("nodemailer");
 
+// ================= SEND OTP =================
 
 const sendOTP = async (req, res) => {
   const { email } = req.body;
@@ -16,8 +17,6 @@ const sendOTP = async (req, res) => {
   req.session.otp = otp;
   req.session.email = email;
 
-  console.log("OTP Request Received");
-  console.log("Email:", email);
   console.log("Generated OTP:", otp);
 
   try {
@@ -29,37 +28,33 @@ const sendOTP = async (req, res) => {
       },
     });
 
-    const info = await transporter.sendMail({
+    await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
       subject: "Student Feedback System OTP",
       text: `Your OTP is ${otp}`,
     });
 
-    console.log("Mail Sent Successfully");
-    console.log(info.response);
+    console.log("OTP Sent Successfully");
 
     res.json({
       success: true,
       message: "OTP Sent Successfully",
     });
-
   } catch (error) {
-    console.log("MAIL ERROR:");
-    console.log(error);
+    console.log("Mail Error:", error);
 
     res.status(500).json({
       success: false,
-      message: "Failed to Send OTP",
+      message: error.message,
     });
   }
 };
 
+// ================= VERIFY OTP =================
+
 const verifyOTP = (req, res) => {
   const { otp } = req.body;
-
-  console.log("Entered OTP:", otp);
-  console.log("Stored OTP:", req.session.otp);
 
   if (Number(otp) === req.session.otp) {
     req.session.isAuthenticated = true;
@@ -70,7 +65,7 @@ const verifyOTP = (req, res) => {
     });
   }
 
-  return res.status(400).json({
+  res.status(400).json({
     success: false,
     message: "Invalid OTP",
   });
