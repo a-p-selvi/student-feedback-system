@@ -21,11 +21,16 @@ const sendOTP = async (req, res) => {
     console.log("Creating transporter...");
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      host: "smtp.gmail.com",
+      port: 465,
+      secure: true,
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
       },
+      connectionTimeout: 30000,
+      greetingTimeout: 30000,
+      socketTimeout: 30000,
     });
 
     console.log("Checking SMTP connection...");
@@ -38,7 +43,12 @@ const sendOTP = async (req, res) => {
       from: `"Student Feedback System" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Student Feedback System OTP",
-      text: `Your OTP is ${otp}. It is valid for 5 minutes.`,
+      html: `
+        <h2>Student Feedback System</h2>
+        <p>Your OTP is:</p>
+        <h1 style="color:blue;">${otp}</h1>
+        <p>This OTP is valid for 5 minutes.</p>
+      `,
     });
 
     console.log("✅ Mail Sent:", info.messageId);
@@ -59,4 +69,9 @@ const sendOTP = async (req, res) => {
       responseCode: error.responseCode,
     });
   }
+};
+
+module.exports = {
+  sendOTP,
+  verifyOTP,
 };
