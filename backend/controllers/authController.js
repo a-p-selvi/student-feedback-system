@@ -1,7 +1,5 @@
 const nodemailer = require("nodemailer");
 
-// ================= SEND OTP =================
-
 const sendOTP = async (req, res) => {
   const { email } = req.body;
 
@@ -20,6 +18,8 @@ const sendOTP = async (req, res) => {
   console.log("Generated OTP:", otp);
 
   try {
+    console.log("Creating transporter...");
+
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -28,19 +28,20 @@ const sendOTP = async (req, res) => {
       },
     });
 
-    // SMTP connection check
+    console.log("Checking SMTP connection...");
     await transporter.verify();
-    console.log("SMTP Connected Successfully");
+    console.log("✅ SMTP Connected");
 
-    // Send OTP Mail
-    await transporter.sendMail({
+    console.log("Sending Mail...");
+
+    const info = await transporter.sendMail({
       from: `"Student Feedback System" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Student Feedback System OTP",
       text: `Your OTP is ${otp}. It is valid for 5 minutes.`,
     });
 
-    console.log("OTP Sent Successfully");
+    console.log("✅ Mail Sent:", info.messageId);
 
     return res.status(200).json({
       success: true,
@@ -48,44 +49,14 @@ const sendOTP = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Mail Error:", error);
+    console.error("❌ MAIL ERROR:", error);
 
     return res.status(500).json({
       success: false,
-      message: "Failed to send OTP",
-      error: error.message,
+      message: error.message,
+      code: error.code,
+      response: error.response,
+      responseCode: error.responseCode,
     });
   }
-};
-
-// ================= VERIFY OTP =================
-
-const verifyOTP = (req, res) => {
-  const { otp } = req.body;
-
-  if (!otp) {
-    return res.status(400).json({
-      success: false,
-      message: "OTP is required",
-    });
-  }
-
-  if (Number(otp) === Number(req.session.otp)) {
-    req.session.isAuthenticated = true;
-
-    return res.json({
-      success: true,
-      message: "OTP Verified Successfully",
-    });
-  }
-
-  return res.status(400).json({
-    success: false,
-    message: "Invalid OTP",
-  });
-};
-
-module.exports = {
-  sendOTP,
-  verifyOTP,
 };
