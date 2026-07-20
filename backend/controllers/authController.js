@@ -21,35 +21,39 @@ const sendOTP = async (req, res) => {
 
   try {
     const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  family: 4, // IPv4 use பண்ணும்
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
 
+    // SMTP connection check
+    await transporter.verify();
+    console.log("SMTP Connected Successfully");
+
+    // Send OTP Mail
     await transporter.sendMail({
-      from: process.env.EMAIL_USER,
+      from: `"Student Feedback System" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Student Feedback System OTP",
-      text: `Your OTP is ${otp}`,
+      text: `Your OTP is ${otp}. It is valid for 5 minutes.`,
     });
 
     console.log("OTP Sent Successfully");
 
-    res.json({
+    return res.status(200).json({
       success: true,
       message: "OTP Sent Successfully",
     });
-  } catch (error) {
-    console.log("Mail Error:", error);
 
-    res.status(500).json({
+  } catch (error) {
+    console.error("Mail Error:", error);
+
+    return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to send OTP",
+      error: error.message,
     });
   }
 };
@@ -59,16 +63,23 @@ const sendOTP = async (req, res) => {
 const verifyOTP = (req, res) => {
   const { otp } = req.body;
 
-  if (Number(otp) === req.session.otp) {
+  if (!otp) {
+    return res.status(400).json({
+      success: false,
+      message: "OTP is required",
+    });
+  }
+
+  if (Number(otp) === Number(req.session.otp)) {
     req.session.isAuthenticated = true;
 
     return res.json({
       success: true,
-      message: "OTP Verified",
+      message: "OTP Verified Successfully",
     });
   }
 
-  res.status(400).json({
+  return res.status(400).json({
     success: false,
     message: "Invalid OTP",
   });
